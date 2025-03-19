@@ -2,7 +2,6 @@ package funkin.backend.system;
 
 import funkin.editors.SaveWarning;
 import funkin.backend.assets.AssetsLibraryList;
-import funkin.backend.system.framerate.SystemInfo;
 import openfl.utils.AssetLibrary;
 import openfl.text.TextFormat;
 import flixel.system.ui.FlxSoundTray;
@@ -16,6 +15,7 @@ import flixel.addons.transition.TransitionData;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import funkin.backend.system.modules.*;
+import funkin.backend.system.debugText.DebugPrint;
 
 #if ALLOW_MULTITHREADING
 import sys.thread.Thread;
@@ -39,7 +39,8 @@ class Main extends Sprite
 	public static var noTerminalColor:Bool = false;
 
 	public static var scaleMode:FunkinRatioScaleMode;
-	public static var framerateSprite:funkin.backend.system.framerate.Framerate;
+	
+	public var framerateSprite:funkin.backend.system.framerate.Framerate;
 
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels).
@@ -47,6 +48,8 @@ class Main extends Sprite
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
 
 	public static var game:FunkinGame;
+
+	public var debugPrintLog:DebugPrint = new DebugPrint(new TextFormat("_sans", 24), true);
 
 	/**
 	 * The time since the game was focused last time in seconds.
@@ -81,12 +84,15 @@ class Main extends Sprite
 
 		#if android FlxG.android.preventDefaultKeys = [BACK]; #end
 
+		addChild(debugPrintLog);
+
 		#if !web
 		addChild(framerateSprite);
 		#if mobile
-		FlxG.stage.window.onResize.add((w:Int, h:Int) -> framerateSprite.setScale());
+		FlxG.stage.window.onResize.add((w:Int, h:Int) -> {
+			framerateSprite.setScale();
+		});
 		#end
-		SystemInfo.init();
 		#end
 	}
 
@@ -137,9 +143,12 @@ class Main extends Sprite
 		ShaderResizeFix.init();
 		Logs.init();
 		Paths.init();
+		//我是废物
+		funkin.extra.UnusedVideoState.init();
 		#if GLOBAL_SCRIPT
 		funkin.backend.scripting.GlobalScript.init();
 		#end
+		funkin.backend.scripting.addons.AddonsManager.init();
 
 		#if (sys && TEST_BUILD)
 			trace("Used cne test / cne build. Switching into source assets.");
