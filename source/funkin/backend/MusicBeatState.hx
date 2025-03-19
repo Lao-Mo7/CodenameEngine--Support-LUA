@@ -292,7 +292,7 @@ class MusicBeatState extends FlxState implements IBeatReceiver implements IState
 	override function create()
 	{
 		loadScript();
-		Framerate.instance.offset.y = 0;
+		Framerate.offset.y = 0;
 		super.create();
 		call("create");
 		stateScripts.luaCall("onCreate");
