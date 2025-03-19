@@ -1701,7 +1701,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 		
-		scripts.luaCall("noteMiss", [strumLine.notes.members.indexOf(note), note.noteType, note.strumID, note.isSustainNote]);
+		if(note != null) scripts.luaCall("noteMiss", [strumLine.notes.members.indexOf(note), note.noteType, note.strumID, note.isSustainNote]);
 
 		if (event.deleteNote && strumLine != null && note != null)
 			strumLine.deleteNote(note);
